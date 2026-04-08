@@ -4,6 +4,10 @@ import "@typespec/rest";
 using TypeSpec.Http;
 using TypeSpec.Rest;
 
+@service(#{ title: "Booking API" })
+@server("http://127.0.0.1:4010", "Prism mock")
+namespace BookingApi;
+
 @doc("RFC 3339 date-time string with timezone offset (e.g. 2026-04-07T06:30:00Z or 2026-04-07T09:30:00+03:00).")
 scalar DateTimeString extends string;
 
@@ -50,8 +54,7 @@ model Slot {
   durationMinutes: int32;
 }
 
-@doc("Request payload to create a slot (admin only, no auth in MVP).")
-@doc("Business constraints: slot must be within owner availability 09:00-18:00 (owner/app time).")
+@doc("Request payload to create a slot (admin only, no auth in MVP). Business constraints: slot must be within owner availability 09:00-18:00 (owner/app time).")
 model CreateSlotRequest {
   startAt: DateTimeString;
   durationMinutes: int32;
@@ -74,10 +77,7 @@ model Booking {
   guest?: GuestContact;
 }
 
-@doc("Create booking request.")
-@doc("Constraints:")
-@doc("- Slot must exist and its duration must equal eventType.durationMinutes.")
-@doc("- Booking interval must not overlap any existing booking interval, regardless of event type.")
+@doc("Create booking request. Constraints: slot must exist and its duration must equal eventType.durationMinutes. Booking interval must not overlap any existing booking interval, regardless of event type.")
 model CreateBookingRequest {
   eventTypeId: EventTypeId;
   slotId: SlotId;
@@ -152,7 +152,7 @@ model SlotCreatedResponse {
 }
 
 @doc("Public endpoints for guests (no auth).")
-namespace Public {
+namespace BookingApi.Public {
   @route("/event-types")
   interface EventTypes {
     @doc("List available event types.")
@@ -161,9 +161,7 @@ namespace Public {
     @doc("Get a single event type.")
     @get op get(@path eventTypeId: EventTypeId): EventTypeResponse | ErrorResponse;
 
-    @doc("List available (free) slots for a given event type.")
-    @doc("Returns only slots where slot.durationMinutes == eventType.durationMinutes and the slot interval does not overlap any existing booking.")
-    @doc("Optional query window can be used to limit results. Times are compared as instants.")
+    @doc("List available (free) slots for a given event type. Returns only slots where slot.durationMinutes == eventType.durationMinutes and the slot interval does not overlap any existing booking. Optional query window can be used to limit results. Times are compared as instants.")
     @route("/{eventTypeId}/slots")
     @get op listAvailableSlots(
       @path eventTypeId: EventTypeId,
@@ -174,14 +172,13 @@ namespace Public {
 
   @route("/bookings")
   interface Bookings {
-    @doc("Create a booking for the selected event type and slot.")
-    @doc("409 is returned when booking interval overlaps an existing booking (any event type).")
+    @doc("Create a booking for the selected event type and slot. 409 is returned when booking interval overlaps an existing booking (any event type).")
     @post op create(@body body: CreateBookingRequest): BookingCreatedResponse | ErrorResponse;
   }
 }
 
 @doc("Admin endpoints for the owner UI (no auth in MVP).")
-namespace Admin {
+namespace BookingApi.Admin {
   @route("/admin/event-types")
   interface EventTypes {
     @doc("Create an event type.")
@@ -196,8 +193,7 @@ namespace Admin {
 
   @route("/admin/bookings")
   interface Bookings {
-    @doc("List upcoming bookings across all event types.")
-    @doc("Query window can be used to filter by startAt. If omitted, server returns future bookings from 'now'.")
+    @doc("List upcoming bookings across all event types. Query window can be used to filter by startAt. If omitted, server returns future bookings from 'now'.")
     @get op list(
       @query from?: DateTimeString,
       @query to?: DateTimeString
