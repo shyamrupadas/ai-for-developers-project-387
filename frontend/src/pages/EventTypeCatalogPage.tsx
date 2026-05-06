@@ -33,7 +33,7 @@ function EventTypeCatalogPage() {
             <div>
               <Text fw={600}>Shyam</Text>
               <Text c="dimmed" size="sm">
-                Head
+                Начальник
               </Text>
             </div>
           </Group>
