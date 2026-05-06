@@ -28,12 +28,12 @@ function EventTypeCatalogPage() {
         <Card withBorder radius="lg" padding="xl" className="page-card">
           <Group align="center" gap="md">
             <Avatar radius="xl" size="lg" color="sunset">
-              С
+              S
             </Avatar>
             <div>
-              <Text fw={600}>Сергей</Text>
+              <Text fw={600}>Shyam</Text>
               <Text c="dimmed" size="sm">
-                Начальник
+                Head
               </Text>
             </div>
           </Group>
