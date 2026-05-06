@@ -2,7 +2,7 @@
 [![Actions Status](https://github.com/shyamrupadas/ai-for-developers-project-386/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/shyamrupadas/ai-for-developers-project-386/actions)
 
 ## Деплой
-https://ai-for-developers-project-386-f7m8.onrender.com
+https://ai-for-developers-project-387-6v59.onrender.com/
 
 ## Описание приложения
 
